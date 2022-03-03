@@ -25,37 +25,37 @@ class Block:
             f")"
         )
 
+    @staticmethod
+    def mine_block(last_block: "Block", data) -> "Block":
+        """
+        Creates a block given the last block and the given data
 
-def mine_block(last_block: Block, data) -> Block:
-    """
-    Creates a block given the last block and the given data
+        :param last_block: the last Block so that we can get its hash value
+        :param data: whatever data is to be put in this block
+        :return: a new block to be added to the chain
+        """
+        timestamp = time.time_ns()
+        last_hash = last_block.hash
+        hash_ = f"{timestamp}-{last_hash}"
 
-    :param last_block: the last Block so that we can get its hash value
-    :param data: whatever data is to be put in this block
-    :return: a new block to be added to the chain
-    """
-    timestamp = time.time_ns()
-    last_hash = last_block.hash
-    hash_ = f"{timestamp}-{last_hash}"
+        return Block(timestamp=timestamp, last_hash=last_hash, hash_=hash_, data=data)
 
-    return Block(timestamp=timestamp, last_hash=last_hash, hash_=hash_, data=data)
-
-
-def genesis():
-    """
-    Creates the first block to start the blockchain
-    :return: an initial block to start the chain
-    """
-    return Block(
-        timestamp=1, last_hash="genesis_last_hash", hash_="genesis_hash", data=[]
-    )
+    @staticmethod
+    def genesis():
+        """
+        Creates the first block to start the blockchain
+        :return: an initial block to start the chain
+        """
+        return Block(
+            timestamp=1, last_hash="genesis_last_hash", hash_="genesis_hash", data=[]
+        )
 
 
 def main():
     print(f"block.py __name__ : {__name__}")
 
-    genesis_block = genesis()
-    block = mine_block(genesis_block, "first")
+    genesis_block = Block.genesis()
+    block = Block.mine_block(last_block=genesis_block, data="first")
     print(block)
 
 
