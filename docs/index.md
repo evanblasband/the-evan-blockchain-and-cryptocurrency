@@ -1,22 +1,16 @@
-.. The EvanChain and Currency documentation master file, created by
-   sphinx-quickstart on Wed Mar  2 17:51:44 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+[comment]: <> (.. The EvanChain and Currency documentation master file, created by)
 
-Welcome to The EvanChain and Currency's documentation!
-======================================================
-Hello World!
+[comment]: <> (   sphinx-quickstart on Wed Mar  2 17:51:44 2022.)
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+[comment]: <> (   You can adapt this file completely to your liking, but it should at least)
 
-   about_us
+[comment]: <> (   contain the root `toctree` directive.)
 
+# Welcome to The EvanChain and Currency's documentation!
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+```{toctree}
+:maxdepth: 2
+:caption: "Contents:"
+   
+about_us
+```
