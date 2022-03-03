@@ -3,7 +3,8 @@ import time
 
 class Block:
     """
-    Block: unit of storage that makes up the Blockchain when connected together.
+    Block: unit of storage that makes up the Blockchain when connected
+    together.
     Contains data that consists of transactions
     """
 
@@ -15,13 +16,14 @@ class Block:
         self.data = data
 
     def __repr__(self):
-        return (f'Block('
-                f'timestamp: {self.timestamp}, '
-                f'last_hash: {self.last_hash}, '
-                f'hash: {self.hash}, '
-                f'data: {self.data}, '
-                f')'
-                )
+        return (
+            f"Block("
+            f"timestamp: {self.timestamp}, "
+            f"last_hash: {self.last_hash}, "
+            f"hash: {self.hash}, "
+            f"data: {self.data}, "
+            f")"
+        )
 
 
 def mine_block(last_block: Block, data) -> Block:
@@ -34,7 +36,7 @@ def mine_block(last_block: Block, data) -> Block:
     """
     timestamp = time.time_ns()
     last_hash = last_block.hash
-    hash_ = f'{timestamp}-{last_hash}'
+    hash_ = f"{timestamp}-{last_hash}"
 
     return Block(timestamp=timestamp, last_hash=last_hash, hash_=hash_, data=data)
 
@@ -44,16 +46,18 @@ def genesis():
     Creates the first block to start the blockchain
     :return: an initial block to start the chain
     """
-    return Block(timestamp=1, last_hash='genesis_last_hash', hash_='genesis_hash', data=[])
+    return Block(
+        timestamp=1, last_hash="genesis_last_hash", hash_="genesis_hash", data=[]
+    )
 
 
 def main():
-    print(f'block.py __name__ : {__name__}')
+    print(f"block.py __name__ : {__name__}")
 
     genesis_block = genesis()
-    block = mine_block(genesis_block, 'first')
+    block = mine_block(genesis_block, "first")
     print(block)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
