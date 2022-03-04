@@ -3,7 +3,7 @@ from backend.utils.crypto_hash import crypto_hash
 
 def test_input_types_and_order():
     """
-    Should create the same hash for any input types in any order
+    Should create the same hash_ for any input types in any order
     :return:
     """
     assert crypto_hash(1, [2], "three") == crypto_hash([2], "three", 1)

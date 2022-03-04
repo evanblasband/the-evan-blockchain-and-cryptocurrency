@@ -4,9 +4,9 @@ import json
 
 def crypto_hash(*args) -> hash:
     """
-    Creates a hash for the given arguments
-    :param args: the data to make a hash of
-    :return: a sha-256 hash for the given data
+    Creates a hash_ for the given arguments
+    :param args: the data to make a hash_ of
+    :return: a sha-256 hash_ for the given data
     """
     # converts all args to a string using json dumps and sorts it
     args_as_str = sorted(map(lambda data: json.dumps(data), args))
