@@ -1,5 +1,5 @@
 # when you import something it actually runs everything in that file
-from block import Block
+from backend.blockchain.block import Block
 
 
 class Blockchain:
