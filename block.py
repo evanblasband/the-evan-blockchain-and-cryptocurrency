@@ -1,5 +1,7 @@
 import time
 
+from crypto_hash import crypto_hash
+
 
 class Block:
     """
@@ -36,12 +38,12 @@ class Block:
         """
         timestamp = time.time_ns()
         last_hash = last_block.hash
-        hash_ = f"{timestamp}-{last_hash}"
+        hash_ = crypto_hash(timestamp, last_hash, data)
 
         return Block(timestamp=timestamp, last_hash=last_hash, hash_=hash_, data=data)
 
     @staticmethod
-    def genesis():
+    def genesis() -> "Block":
         """
         Creates the first block to start the blockchain
         :return: an initial block to start the chain
