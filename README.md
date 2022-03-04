@@ -10,3 +10,11 @@ source venv/bin/activate
 ```bash
 pip3 install -r requirements.txt
 ```
+
+**Running tests**
+
+Make sure to activate the virtual env
+(example for backend directory)
+```bash
+python3 -m pytest backend/test
+```
