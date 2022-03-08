@@ -3,7 +3,7 @@ from backend.blockchain.block import GENESIS_DATA, Block
 
 def test_mine_block():
     """
-    testing the creation of a blcok and making sure parameters match inputs
+    testing the creation of a block and making sure parameters match inputs
     :return:
     """
     last_block = Block.genesis()
@@ -18,7 +18,7 @@ def test_mine_block():
 
 def test_genesis():
     """
-    makes sure the genesis funcitons creates a block with all of the correct
+    makes sure the genesis functions creates a block with all of the correct
     values
     :return:
     """
