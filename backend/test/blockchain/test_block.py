@@ -13,6 +13,7 @@ def test_mine_block():
     assert isinstance(block, Block)
     assert block.data == data
     assert block.last_hash == last_block.hash_
+    assert block.hash_[0 : block.difficulty] == "0" * block.difficulty
 
 
 def test_genesis():
