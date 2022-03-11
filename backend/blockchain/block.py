@@ -2,6 +2,7 @@ import time
 
 from backend.config import MINE_RATE
 from backend.utils.crypto_hash import crypto_hash
+from backend.utils.hex_to_binary import hex_to_bin
 
 # Default values for the genesis block
 # pulled out as global variable for testing purposes
@@ -70,7 +71,7 @@ class Block:
         nonce = 0
         hash_ = crypto_hash(timestamp, last_hash, data, difficulty, nonce)
 
-        while hash_[0:difficulty] != "0" * difficulty:
+        while hex_to_bin(hash_)[0:difficulty] != "0" * difficulty:
             nonce += 1
             timestamp = time.time_ns()
             difficulty = Block.adjust_difficulty(
