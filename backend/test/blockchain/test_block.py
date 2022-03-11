@@ -1,8 +1,10 @@
 import time
 
+import pytest
+
 from backend.blockchain.block import GENESIS_DATA, Block
 from backend.config import MINE_RATE, SECONDS
-from backend.utils.hex_to_binary import hex_to_bin, hex_to_bin2
+from backend.utils.hex_to_binary import hex_to_bin
 
 
 def test_mine_block():
@@ -78,3 +80,68 @@ def test_adjust_difficulty_default():
     mined_block = Block.mine_block(last_block=last_block, data="test2")
 
     assert mined_block.difficulty == 1
+
+
+@pytest.fixture
+def last_block():
+    return Block.genesis()
+
+
+@pytest.fixture
+def block(last_block):
+    return Block.mine_block(last_block=last_block, data="test-data")
+
+
+def test_is_valid_block(last_block, block):
+    """
+    Test for a valid block. If this fails an exception will be raised
+    :return:
+    """
+    Block.is_valid_block(last_block=last_block, block=block)
+
+
+def test_is_valid_block_bad_last_hash(last_block, block):
+    """
+    Test for a bad last_hash. Should raise an exception
+    :return:
+    """
+    block.last_hash = "bad_hash"
+
+    with pytest.raises(Exception, match="the block's last_hash must be " "correct"):
+        Block.is_valid_block(last_block=last_block, block=block)
+
+
+def test_is_valid_block_bad_proof_of_work(last_block, block):
+    """
+    Test for a when proof of work is not correct. Should raise an exception
+    :return:
+    """
+    block.hash_ = "fff"
+
+    with pytest.raises(Exception, match="Proof of work requirement not met"):
+        Block.is_valid_block(last_block=last_block, block=block)
+
+
+def test_is_valid_block_bad_difficulty_jump(last_block, block):
+    """
+    Test for a when difficulty changes by more than one. Should raise an
+    exception
+    :return:
+    """
+    jump_val = 2
+    block.difficulty = last_block.difficulty + jump_val
+    block.hash_ = f"{'0' * jump_val}111abc"
+    with pytest.raises(Exception, match="Difficulty was changed by more than 1"):
+        Block.is_valid_block(last_block=last_block, block=block)
+
+
+def test_is_valid_block_bad_hash(last_block, block):
+    """
+    Test for a when restructured hash does not compute to the block.hash_.
+    Should raise an
+    exception
+    :return:
+    """
+    block.hash_ = "00000000000000000111abc"
+    with pytest.raises(Exception, match="The hash value does not compute"):
+        Block.is_valid_block(last_block=last_block, block=block)
