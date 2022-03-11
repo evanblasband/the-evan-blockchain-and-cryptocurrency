@@ -15,7 +15,7 @@ class Blockchain:
         """Constructor for Blockchain"""
         self.chain = [Block.genesis()]
 
-    def add_block(self, data: str) -> None:
+    def add_block(self, data) -> None:
         last_block = self.chain[-1]  # the last block in the list
         self.chain.append(Block.mine_block(last_block=last_block, data=data))
 
