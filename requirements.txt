@@ -1,7 +1,8 @@
 sphinx
-livereload
+livereload~=2.6.3
 myst-parser
 
 pre-commit
 
 pytest=7.0.1
+pytest~=7.0.1
