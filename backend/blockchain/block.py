@@ -123,13 +123,53 @@ class Block:
         # Creates the same as above
         return Block(**GENESIS_DATA)
 
+    @staticmethod
+    def is_valid_block(last_block: "Block", block: "Block"):
+        """
+        Validate a block based on the following set of rules:
+            - must have proper last_hash reference
+            - must meet proper proof of work requirement
+            - difficulty must only adjust by 1
+            - block hash must be valid combination of block fields
+        :param last_block: the last block in the chain to reference
+        :param block: the current block being validated
+        :return: whether or not the block is valid
+        """
+
+        if block.last_hash != last_block.hash_:
+            raise Exception("the block's last_hash must be correct")
+        if hex_to_bin(block.hash_)[0 : block.difficulty] != "0" * block.difficulty:
+            raise Exception("Proof of work requirement not met")
+        if abs(last_block.difficulty - block.difficulty) > 1:
+            raise Exception("Difficulty was changed by more than 1")
+
+        reconstructed_hash = crypto_hash(
+            block.timestamp,
+            block.last_hash,
+            block.data,
+            block.difficulty,
+            block.nonce,
+        )
+
+        if block.hash_ != reconstructed_hash:
+            raise Exception("The hash value does not compute")
+
 
 def main():
-    print(f"block.py __name__ : {__name__}")
-
+    # print(f"block.py __name__ : {__name__}")
+    #
+    # genesis_block = Block.genesis()
+    # block = Block.mine_block(last_block=genesis_block, data="first")
+    # print(block)
     genesis_block = Block.genesis()
-    block = Block.mine_block(last_block=genesis_block, data="first")
-    print(block)
+    good_block = Block.mine_block(last_block=genesis_block, data="foo")
+    bad_block = good_block
+    bad_block.last_hash = "evil_hash"
+    try:
+        Block.is_valid_block(last_block=genesis_block, block=bad_block)
+        print("The block is valid")
+    except Exception as e:
+        print(f"is_valid_block: FALSE - {e}")
 
 
 if __name__ == "__main__":
