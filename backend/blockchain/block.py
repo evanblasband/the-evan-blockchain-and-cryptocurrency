@@ -52,6 +52,15 @@ class Block:
             f")"
         )
 
+    def __eq__(self, other):
+        """
+        overloading equality operator so that we can compare different
+        instances of the block class (i.e. for genesis comparison)
+        :param other:
+        :return:
+        """
+        return self.__dict__ == other.__dict__
+
     @staticmethod
     def mine_block(last_block: "Block", data) -> "Block":
         """
