@@ -15,6 +15,20 @@ class Blockchain:
         """Constructor for Blockchain"""
         self.chain = [Block.genesis()]
 
+    def __repr__(self) -> str:
+        """
+        formatting hte chain for printing
+        :return:
+        """
+        return f"Blockchain data: {self.chain}"
+
+    def to_json(self) -> list:
+        """
+        Serialize the blockchain into a list of serialized blocks
+        :return: the chain list of serialized blocks
+        """
+        return list(map(lambda block_: block_.to_json(), self.chain))
+
     def add_block(self, data) -> None:
         """
         adding a block to the chain
@@ -24,33 +38,7 @@ class Blockchain:
         last_block = self.chain[-1]  # the last block in the list
         self.chain.append(Block.mine_block(last_block=last_block, data=data))
 
-    def __repr__(self) -> str:
-        """
-        formatting hte chain for printing
-        :return:
-        """
-        return f"Blockchain data: {self.chain}"
-
-    @staticmethod
-    def is_valid_chain(blockchain: "Blockchain"):
-        """
-        Validates the incoming chain.
-        Enforces the following rules for the blockchain:
-            - Must start with the genesis block
-            - blocks must be formatted correctly
-        :param blockchain: the chain to validate
-        :return:
-        """
-        chain = blockchain.chain
-        if chain[0] != Block.genesis():
-            raise Exception("Chain does not start with the genesis block")
-
-        for i in range(1, len(chain)):
-            block = chain[i]
-            last_block = chain[i - 1]
-            Block.is_valid_block(last_block=last_block, block=block)
-
-    def replace_chain(self, blockchain: "Blockchain"):
+    def replace_chain(self, blockchain: "Blockchain") -> None:
         """
         Replace local chain with the incoming one if the following rules apply:
             - incoming chain must be longer than the old one
@@ -67,6 +55,25 @@ class Blockchain:
             raise Exception(f"Can not replace chain.  New  Chain is invalid: " f"{e}")
         # New chain was valid so we replace it
         self.chain = blockchain.chain
+
+    @staticmethod
+    def is_valid_chain(blockchain: "Blockchain") -> None:
+        """
+        Validates the incoming chain.
+        Enforces the following rules for the blockchain:
+            - Must start with the genesis block
+            - blocks must be formatted correctly
+        :param blockchain: the chain to validate
+        :return:
+        """
+        chain = blockchain.chain
+        if chain[0] != Block.genesis():
+            raise Exception("Chain does not start with the genesis block")
+
+        for i in range(1, len(chain)):
+            block = chain[i]
+            last_block = chain[i - 1]
+            Block.is_valid_block(last_block=last_block, block=block)
 
 
 def main():

@@ -40,7 +40,7 @@ class Block:
         self.nonce = nonce
         self.difficulty = difficulty
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"Block("
             f"timestamp: {self.timestamp}, "
@@ -52,7 +52,7 @@ class Block:
             f")"
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         overloading equality operator so that we can compare different
         instances of the block class (i.e. for genesis comparison)
@@ -60,6 +60,13 @@ class Block:
         :return:
         """
         return self.__dict__ == other.__dict__
+
+    def to_json(self) -> dict:
+        """
+        Serialize block into dictionary representation
+        :return: dictionary of attributes in block
+        """
+        return self.__dict__
 
     @staticmethod
     def mine_block(last_block: "Block", data) -> "Block":
@@ -133,7 +140,7 @@ class Block:
         return Block(**GENESIS_DATA)
 
     @staticmethod
-    def is_valid_block(last_block: "Block", block: "Block"):
+    def is_valid_block(last_block: "Block", block: "Block") -> None:
         """
         Validate a block based on the following set of rules:
             - must have proper last_hash reference
