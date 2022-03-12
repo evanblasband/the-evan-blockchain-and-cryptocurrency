@@ -18,3 +18,10 @@ Make sure to activate the virtual env
 ```bash
 python3 -m pytest backend/test
 ```
+
+**Running the applicaiotn and API**
+
+Make sure to activate the virtual env
+```bash
+python3 -m backend.app
+```
