@@ -16,10 +16,19 @@ class Blockchain:
         self.chain = [Block.genesis()]
 
     def add_block(self, data) -> None:
+        """
+        adding a block to the chain
+        :param data: the data to be added (i.e. a list of transactions)
+        :return:
+        """
         last_block = self.chain[-1]  # the last block in the list
         self.chain.append(Block.mine_block(last_block=last_block, data=data))
 
     def __repr__(self) -> str:
+        """
+        formatting hte chain for printing
+        :return:
+        """
         return f"Blockchain data: {self.chain}"
 
     @staticmethod
@@ -40,6 +49,24 @@ class Blockchain:
             block = chain[i]
             last_block = chain[i - 1]
             Block.is_valid_block(last_block=last_block, block=block)
+
+    def replace_chain(self, blockchain: "Blockchain"):
+        """
+        Replace local chain with the incoming one if the following rules apply:
+            - incoming cahin must be longer than the old one
+            - Chain must be formatted properly
+        :param blockchain: the incoming chain to replace with
+        :return:
+        """
+        if len(blockchain.chain) <= len(self.chain):
+            raise Exception("Can not replace chain. New chain is not longer")
+
+        try:
+            Blockchain.is_valid_chain(blockchain=blockchain)
+        except Exception as e:
+            raise Exception(f"Can not replace chain.  New  Chain is invalid: " f"{e}")
+        # New chain was valid so we replace it
+        self.chain = blockchain.chain
 
 
 def main():

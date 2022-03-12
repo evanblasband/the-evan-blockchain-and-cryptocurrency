@@ -59,3 +59,42 @@ def test_is_valid_chain_bad_genesis(block_chain_3_blocks):
         Exception, match="Chain does not start with the " "genesis block"
     ):
         Blockchain.is_valid_chain(blockchain=block_chain_3_blocks)
+
+
+def test_replace_chain(block_chain_3_blocks):
+    """
+    Making sure a valid blockchain replaces the current one
+    :param block_chain_3_blocks: valid blockchain with 3 blocks
+    :return:
+    """
+    blockchain = Blockchain()
+    blockchain.replace_chain(blockchain=block_chain_3_blocks)
+
+    assert blockchain.chain == block_chain_3_blocks.chain
+
+
+def test_replace_chain_too_short(block_chain_3_blocks):
+    """
+    trying to update blockchain with a shorter blockchain.  Should throw
+    exception.
+    :param block_chain_3_blocks: valid blockchain with 3 blocks
+    :return:
+    """
+    blockchain = Blockchain()
+    with pytest.raises(
+        Exception, match="Can not replace chain. New chain " "is not longer"
+    ):
+        block_chain_3_blocks.replace_chain(blockchain=blockchain)
+
+
+def test_replace_chain_bad_chain(block_chain_3_blocks):
+    """
+    trying to update chain with a corrupt chain. Should throw exception
+    :param block_chain_3_blocks: valid blockchain with 3 blocks
+    :return:
+    """
+    blockchain = Blockchain()
+    block_chain_3_blocks.chain[-1].hash_ = "bad_hash"
+
+    with pytest.raises(Exception):
+        blockchain.replace_chain(block_chain_3_blocks)
