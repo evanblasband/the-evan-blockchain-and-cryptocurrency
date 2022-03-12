@@ -53,7 +53,7 @@ class Blockchain:
     def replace_chain(self, blockchain: "Blockchain"):
         """
         Replace local chain with the incoming one if the following rules apply:
-            - incoming cahin must be longer than the old one
+            - incoming chain must be longer than the old one
             - Chain must be formatted properly
         :param blockchain: the incoming chain to replace with
         :return:
