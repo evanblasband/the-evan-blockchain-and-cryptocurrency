@@ -38,8 +38,10 @@ def route_blockchain_mine() -> flask.Response:
     """
     transaction_data = "stubbed_transaction_data"
     blockchain.add_block(data=transaction_data)
+    block = blockchain.chain[-1]
+    pubsub.broadcast_block(block=block)
 
-    return jsonify(blockchain.chain[-1].to_json())
+    return block.to_json()
 
 
 # Need to enable other nodes to run on different ports

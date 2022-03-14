@@ -5,13 +5,15 @@ from pubnub.callbacks import SubscribeCallback
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
+from backend.blockchain.block import Block
+
 pn_config = PNConfiguration()
 pn_config.publish_key = "pub-c-97eb77a6-9354-49f5-a545-803eb1878734"
 pn_config.subscribe_key = "sub-c-f87a79a8-a3dd-11ec-81c7-420d26494bdd"
 pn_config.uuid = "python-blockchain-uuid"
 pubnub = PubNub(config=pn_config)
 
-TEST_CHANNEL = "TEST_CHANNEL"
+CHANNELS = {"TEST": "TEST", "BLOCK": "BLOCK"}
 
 
 # ABC superclass was added to satisfy the interpreter
@@ -20,7 +22,7 @@ TEST_CHANNEL = "TEST_CHANNEL"
 class Listener(SubscribeCallback, ABC):
     """"""
 
-    def message(self, pubnub, message):
+    def message(self, pubnub, message) -> None:
         """
         Override of message method for our listener
         :param pubnub:
@@ -41,10 +43,10 @@ class PubSub:
     ):
         """Constructor for PubSub"""
         self.pubnub = PubNub(pn_config)
-        self.pubnub.subscribe().channels([TEST_CHANNEL]).execute()
+        self.pubnub.subscribe().channels(CHANNELS.values()).execute()
         self.pubnub.add_listener(Listener())
 
-    def publish(self, channel: str, message):
+    def publish(self, channel: str, message) -> None:
         """
         publishes the message object to the specified channel
         :param channel: the channel to be published to
@@ -53,12 +55,20 @@ class PubSub:
         """
         self.pubnub.publish().channel(channel=channel).message(message=message).sync()
 
+    def broadcast_block(self, block: Block) -> None:
+        """
+        Broadcast a block to all nodes
+        :param block: the block to broadcast
+        :return:
+        """
+        self.publish(channel=CHANNELS["BLOCK"], message=block.to_json())
+
 
 def main():
     pubsub = PubSub()
     # to ensure that our subscription is setup before we send any messages
     time.sleep(1)
-    pubsub.publish(channel=TEST_CHANNEL, message={"foo": "bar"})
+    pubsub.publish(channel=CHANNELS["TEST"], message={"foo": "bar"})
 
 
 if __name__ == "__main__":
