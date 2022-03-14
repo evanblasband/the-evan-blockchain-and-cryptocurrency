@@ -14,31 +14,51 @@ pubnub = PubNub(config=pn_config)
 TEST_CHANNEL = "TEST_CHANNEL"
 
 
-pubnub.subscribe().channels([TEST_CHANNEL]).execute()
-# Have a sleep so that we can ensure that we are subscribed before any messages
-time.sleep(1)
-
-
 # ABC superclass was added to satisfy the interpreter
 # Not totally sure what it is/does
+# https://www.geeksforgeeks.org/abstract-base-class-abc-in-python/
 class Listener(SubscribeCallback, ABC):
-    """ """
+    """"""
 
-    def message(self, pubnub_, message):
+    def message(self, pubnub, message):
         """
         Override of message method for our listener
-        :param pubnub_:
+        :param pubnub:
         :param message: the message that is received
         :return:
         """
-        print(f"\n --Incoming message: {message}")
+        print(f"\n --Channel: {message.channel} | Message: {message.message}")
 
 
-pubnub.add_listener(Listener())
+class PubSub:
+    """
+    Handles the publish/subscribe layer of the application.
+    Provides communication between nodes in the blockchain
+    """
+
+    def __init__(
+        self,
+    ):
+        """Constructor for PubSub"""
+        self.pubnub = PubNub(pn_config)
+        self.pubnub.subscribe().channels([TEST_CHANNEL]).execute()
+        self.pubnub.add_listener(Listener())
+
+    def publish(self, channel: str, message):
+        """
+        publishes the message object to the specified channel
+        :param channel: the channel to be published to
+        :param message: the message to be published
+        :return:
+        """
+        self.pubnub.publish().channel(channel=channel).message(message=message).sync()
 
 
 def main():
-    pubnub.publish().channel(TEST_CHANNEL).message({"foo": "bar"}).sync()
+    pubsub = PubSub()
+    # to ensure that our subscription is setup before we send any messages
+    time.sleep(1)
+    pubsub.publish(channel=TEST_CHANNEL, message={"foo": "bar"})
 
 
 if __name__ == "__main__":
