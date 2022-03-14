@@ -1,3 +1,6 @@
+import os
+import random
+
 import flask
 from flask import Flask, jsonify
 
@@ -7,8 +10,6 @@ from backend.pubsub import PubSub
 app = Flask(__name__)
 blockchain = Blockchain()
 pubsub = PubSub()
-# for i in range(3):
-#     blockchain.add_block(data=i)
 
 
 @app.route("/")
@@ -41,4 +42,10 @@ def route_blockchain_mine() -> flask.Response:
     return jsonify(blockchain.chain[-1].to_json())
 
 
-app.run()
+# Need to enable other nodes to run on different ports
+PORT = 5000
+# check for environment variable
+if os.environ.get("PEER") == "True":
+    PORT = random.randint(5001, 6000)
+
+app.run(port=PORT)
