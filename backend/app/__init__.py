@@ -6,8 +6,8 @@ from backend.blockchain.blockchain import Blockchain
 app = Flask(__name__)
 blockchain = Blockchain()
 
-for i in range(3):
-    blockchain.add_block(data=i)
+# for i in range(3):
+#     blockchain.add_block(data=i)
 
 
 @app.route("/")
@@ -28,8 +28,16 @@ def route_get_blockchain() -> flask.Response:
     return jsonify(blockchain.to_json())
 
 
-# @app.route("/mine_block")
-# def add_block():
+@app.route("/blockchain/mine")
+def route_blockchain_mine() -> flask.Response:
+    """
+    Adds a new block to the blockchain with the specified data
+    :return: the data of the most recently added block in json format
+    """
+    transaction_data = "stubbed_transaction_data"
+    blockchain.add_block(data=transaction_data)
+
+    return jsonify(blockchain.chain[-1].to_json())
 
 
 app.run()
