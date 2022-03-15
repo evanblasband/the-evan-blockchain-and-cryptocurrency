@@ -6,6 +6,7 @@ from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
 from backend.blockchain.block import Block
+from backend.blockchain.blockchain import Blockchain
 
 pn_config = PNConfiguration()
 pn_config.publish_key = "pub-c-97eb77a6-9354-49f5-a545-803eb1878734"
@@ -22,6 +23,13 @@ CHANNELS = {"TEST": "TEST", "BLOCK": "BLOCK"}
 class Listener(SubscribeCallback, ABC):
     """"""
 
+    def __init__(self, blockchain: Blockchain):
+        """
+
+        :param blockchain:
+        """
+        self.blockchain = blockchain
+
     def message(self, pubnub, message) -> None:
         """
         Override of message method for our listener
@@ -31,6 +39,17 @@ class Listener(SubscribeCallback, ABC):
         """
         print(f"\n --Channel: {message.channel} | Message: {message.message}")
 
+        if message.channel == CHANNELS["BLOCK"]:
+            block = Block.from_json(message.message)
+            temp_chain = self.blockchain.chain[:]
+            temp_chain.append(block)
+
+            try:
+                self.blockchain.replace_chain(chain=temp_chain)
+                print("\n -- Chain successfully replaced")
+            except Exception as e:
+                print(f"\n -- Chain was not replaced: {e}")
+
 
 class PubSub:
     """
@@ -38,13 +57,11 @@ class PubSub:
     Provides communication between nodes in the blockchain
     """
 
-    def __init__(
-        self,
-    ):
+    def __init__(self, blockchain: Blockchain):
         """Constructor for PubSub"""
         self.pubnub = PubNub(pn_config)
         self.pubnub.subscribe().channels(CHANNELS.values()).execute()
-        self.pubnub.add_listener(Listener())
+        self.pubnub.add_listener(Listener(blockchain=blockchain))
 
     def publish(self, channel: str, message) -> None:
         """
