@@ -57,6 +57,21 @@ class Blockchain:
         self.chain = chain
 
     @staticmethod
+    def from_json(chain_json: list) -> "Blockchain":
+        """
+        Deserialize a list of serialized blocks into a blockchain instance
+        :param chain_json: the json format of the root node's current
+        blockchain
+        :return: a chain list of block instances
+        """
+        blockchain = Blockchain()
+        blockchain.chain = list(
+            map(lambda block_json: Block.from_json(block_json=block_json), chain_json)
+        )
+
+        return blockchain
+
+    @staticmethod
     def is_valid_chain(chain: list) -> None:
         """
         Validates the incoming chain.
