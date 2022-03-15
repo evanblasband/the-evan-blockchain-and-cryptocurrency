@@ -69,6 +69,15 @@ class Block:
         return self.__dict__
 
     @staticmethod
+    def from_json(block_json: dict) -> "Block":
+        """
+        Deserializes a blocks json representation into a block object
+        :param block_json: Json representation of block data
+        :return: A block object with the data specified in the json
+        """
+        return Block(**block_json)
+
+    @staticmethod
     def mine_block(last_block: "Block", data) -> "Block":
         """
         Creates a block given the last block and the given data until a
