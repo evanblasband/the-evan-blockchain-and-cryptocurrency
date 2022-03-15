@@ -40,15 +40,15 @@ def block_chain_3_blocks():
     return blockchain
 
 
-def test_is_valid_chain(block_chain_3_blocks):
+def test_is_valid_chain(block_chain_3_blocks: Blockchain):
     """
     Test for when a valid blockchain is passed.
     :return:
     """
-    Blockchain.is_valid_chain(blockchain=block_chain_3_blocks)
+    Blockchain.is_valid_chain(chain=block_chain_3_blocks.chain)
 
 
-def test_is_valid_chain_bad_genesis(block_chain_3_blocks):
+def test_is_valid_chain_bad_genesis(block_chain_3_blocks: Blockchain):
     """
     Test for when a chain with a bad genesis block is passed.  Should throw
     an exception
@@ -58,22 +58,22 @@ def test_is_valid_chain_bad_genesis(block_chain_3_blocks):
     with pytest.raises(
         Exception, match="Chain does not start with the " "genesis block"
     ):
-        Blockchain.is_valid_chain(blockchain=block_chain_3_blocks)
+        Blockchain.is_valid_chain(chain=block_chain_3_blocks.chain)
 
 
-def test_replace_chain(block_chain_3_blocks):
+def test_replace_chain(block_chain_3_blocks: Blockchain):
     """
     Making sure a valid blockchain replaces the current one
     :param block_chain_3_blocks: valid blockchain with 3 blocks
     :return:
     """
     blockchain = Blockchain()
-    blockchain.replace_chain(blockchain=block_chain_3_blocks)
+    blockchain.replace_chain(chain=block_chain_3_blocks.chain)
 
     assert blockchain.chain == block_chain_3_blocks.chain
 
 
-def test_replace_chain_too_short(block_chain_3_blocks):
+def test_replace_chain_too_short(block_chain_3_blocks: Blockchain):
     """
     trying to update blockchain with a shorter blockchain.  Should throw
     exception.
@@ -84,10 +84,10 @@ def test_replace_chain_too_short(block_chain_3_blocks):
     with pytest.raises(
         Exception, match="Can not replace chain. New chain " "is not longer"
     ):
-        block_chain_3_blocks.replace_chain(blockchain=blockchain)
+        block_chain_3_blocks.replace_chain(chain=blockchain.chain)
 
 
-def test_replace_chain_bad_chain(block_chain_3_blocks):
+def test_replace_chain_bad_chain(block_chain_3_blocks: Blockchain):
     """
     trying to update chain with a corrupt chain. Should throw exception
     :param block_chain_3_blocks: valid blockchain with 3 blocks
@@ -97,4 +97,4 @@ def test_replace_chain_bad_chain(block_chain_3_blocks):
     block_chain_3_blocks.chain[-1].hash_ = "bad_hash"
 
     with pytest.raises(Exception):
-        blockchain.replace_chain(block_chain_3_blocks)
+        blockchain.replace_chain(chain=block_chain_3_blocks.chain)

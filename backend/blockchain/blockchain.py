@@ -38,35 +38,34 @@ class Blockchain:
         last_block = self.chain[-1]  # the last block in the list
         self.chain.append(Block.mine_block(last_block=last_block, data=data))
 
-    def replace_chain(self, blockchain: "Blockchain") -> None:
+    def replace_chain(self, chain: list) -> None:
         """
         Replace local chain with the incoming one if the following rules apply:
             - incoming chain must be longer than the old one
             - Chain must be formatted properly
-        :param blockchain: the incoming chain to replace with
+        :param chain: the incoming chain to replace with
         :return:
         """
-        if len(blockchain.chain) <= len(self.chain):
+        if len(chain) <= len(self.chain):
             raise Exception("Can not replace chain. New chain is not longer")
 
         try:
-            Blockchain.is_valid_chain(blockchain=blockchain)
+            Blockchain.is_valid_chain(chain=chain)
         except Exception as e:
             raise Exception(f"Can not replace chain.  New  Chain is invalid: " f"{e}")
         # New chain was valid so we replace it
-        self.chain = blockchain.chain
+        self.chain = chain
 
     @staticmethod
-    def is_valid_chain(blockchain: "Blockchain") -> None:
+    def is_valid_chain(chain: list) -> None:
         """
         Validates the incoming chain.
         Enforces the following rules for the blockchain:
             - Must start with the genesis block
             - blocks must be formatted correctly
-        :param blockchain: the chain to validate
+        :param chain: the chain to validate
         :return:
         """
-        chain = blockchain.chain
         if chain[0] != Block.genesis():
             raise Exception("Chain does not start with the genesis block")
 
