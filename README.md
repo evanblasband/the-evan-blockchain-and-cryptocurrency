@@ -1,9 +1,10 @@
 # the-evan-blockchain-and-cryptocurrency
 Implementation of my own blockchain and cryptocurrency.
 
-**Activate the virtual env**
-```python
-source venv/bin/activate
+**Create and Activate the virtual env**
+```bash
+Run python3 -m venv <name_of_virtualenv>
+source <name_of_virtualenv>/bin/activate
 ```
 
 **Install the requirements**
