@@ -7,3 +7,5 @@ pre-commit
 pytest~=7.0.1
 Flask~=2.0.3
 pubnub~=6.1.0
+requests~=2.27.1
+cryptography~=36.0.2
