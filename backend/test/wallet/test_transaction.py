@@ -40,3 +40,83 @@ def test_transaction_amount_exceeds_balance():
         Transaction(
             sender_wallet=Wallet(), recipient="recipient", amount=STARTING_BALANCE + 1
         )
+
+
+def test_transaction_update_amount_exceeds_balance():
+    """
+    Trying to update transaction when amount exceeds the sender's balance,
+    should throw an exception
+    :return:
+    """
+    sender_wallet = Wallet()
+    transaction = Transaction(
+        sender_wallet=sender_wallet, recipient="recipient", amount=50
+    )
+    with pytest.raises(Exception, match="Amount exceeds the balance"):
+        transaction.update_transaction(
+            sender_wallet=sender_wallet,
+            recipient="recipient",
+            amount=sender_wallet.balance + 1000,
+        )
+
+
+def test_transaction_update_existing_recipient():
+    """
+    Updating the transaction amount for an already existing recipient
+    :return:
+    """
+    amount_1 = 50
+    amount_2 = 75
+    assert amount_1 + amount_2 < STARTING_BALANCE
+    recipient = "recipient"
+    sender_wallet = Wallet()
+    transaction = Transaction(
+        sender_wallet=sender_wallet, recipient=recipient, amount=amount_1
+    )
+
+    transaction.update_transaction(
+        sender_wallet=sender_wallet, recipient=recipient, amount=amount_2
+    )
+
+    assert (
+        transaction.output[sender_wallet.address]
+        == STARTING_BALANCE - amount_1 - amount_2
+    )
+    assert transaction.output[recipient] == amount_1 + amount_2
+    assert Wallet.verify(
+        pub_key=transaction.input["public_key"],
+        data=transaction.output,
+        signature=transaction.input["signature"],
+    )
+
+
+def test_transaction_update_new_recipient():
+    """
+    adding a new recipient to the transaction
+    :return:
+    """
+    amount_1 = 50
+    amount_2 = 75
+    assert amount_1 + amount_2 < STARTING_BALANCE
+    recipient_1 = "recipient1"
+    recipient_2 = "recipient2"
+    sender_wallet = Wallet()
+    transaction = Transaction(
+        sender_wallet=sender_wallet, recipient=recipient_1, amount=amount_1
+    )
+
+    transaction.update_transaction(
+        sender_wallet=sender_wallet, recipient=recipient_2, amount=amount_2
+    )
+
+    assert (
+        transaction.output[sender_wallet.address]
+        == STARTING_BALANCE - amount_1 - amount_2
+    )
+    assert transaction.output[recipient_1] == amount_1
+    assert transaction.output[recipient_2] == amount_2
+    assert Wallet.verify(
+        pub_key=transaction.input["public_key"],
+        data=transaction.output,
+        signature=transaction.input["signature"],
+    )

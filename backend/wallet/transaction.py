@@ -20,6 +20,30 @@ class Transaction:
             sender_wallet=sender_wallet, output=self.output
         )
 
+    def update_transaction(
+        self, sender_wallet: Wallet, recipient: str, amount: int
+    ) -> None:
+        """
+        Update a transaction that is already in a block i.e. add
+        recipients or update amount to existing recipient.
+        :param sender_wallet: the wallet that is sending the amount
+        :param recipient: the recipient to add or change amount of
+        :param amount: amount to add or change
+        :return: dictionary with the updated recipients and their
+        corresponding amounts
+        """
+        if amount > self.output[sender_wallet.address]:
+            raise Exception("Amount exceeds the balance")
+
+        if recipient in self.output:
+            self.output[recipient] = self.output[recipient] + amount
+        else:
+            self.output[recipient] = amount
+
+        self.output[sender_wallet.address] = self.output[sender_wallet.address] - amount
+
+        self.input = self.create_input(sender_wallet=sender_wallet, output=self.output)
+
     @staticmethod
     def create_output(sender_wallet: Wallet, recipient: str, amount: int) -> dict:
         """
@@ -46,7 +70,6 @@ class Transaction:
         Sign transaction and include senders public key and address.
         :param sender_wallet: the wallet where amount is being sent from
         :param output: The output data for a given transaction
-        :param amount: the amount being sent
         :return: dictionary with the structured data for the input
         """
         return {
