@@ -80,6 +80,25 @@ class Transaction:
             "signature": sender_wallet.sign(data=output),
         }
 
+    @staticmethod
+    def is_valid_transaction(transaction: "Transaction"):
+        """
+        Validates the format of a transaction.  Raises Exception for invalid
+        transactions.
+        :param transaction: the transaction to validate
+        :return:
+        """
+        output_total = sum(transaction.output.values())
+        if transaction.input["amount"] != output_total:
+            raise Exception("Invalid output transaction total")
+
+        if not Wallet.verify(
+            pub_key=transaction.input["public_key"],
+            data=transaction.output,
+            signature=transaction.input["signature"],
+        ):
+            raise Exception("Invalid signature")
+
 
 def main():
     transaction = Transaction(sender_wallet=Wallet(), recipient="recipient", amount=10)

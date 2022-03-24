@@ -120,3 +120,45 @@ def test_transaction_update_new_recipient():
         data=transaction.output,
         signature=transaction.input["signature"],
     )
+
+
+def test_valid_transaction():
+    """
+    Test a valid transaction throws no exceptions
+    :return:
+    """
+    sender_wallet = Wallet()
+    recipient = "recipient"
+    Transaction.is_valid_transaction(
+        Transaction(sender_wallet=sender_wallet, recipient=recipient, amount=50)
+    )
+
+
+def test_valid_transaction_invalid_outputs():
+    """
+    Test a transaction where the outputs do not add up
+    :return:
+    """
+    sender_wallet = Wallet()
+    recipient = "recipient"
+    transaction = Transaction(
+        sender_wallet=sender_wallet, recipient=recipient, amount=50
+    )
+    transaction.output[recipient] = 12
+    with pytest.raises(Exception, match="Invalid output transaction total"):
+        Transaction.is_valid_transaction(transaction=transaction)
+
+
+def test_valid_transaction_invalid_signature():
+    """
+    Test a transaction where the signature is not valid
+    :return:
+    """
+    sender_wallet = Wallet()
+    recipient = "recipient"
+    transaction = Transaction(
+        sender_wallet=sender_wallet, recipient=recipient, amount=50
+    )
+    transaction.input["signature"] = Wallet().sign(data=transaction.output)
+    with pytest.raises(Exception, match="Invalid signature"):
+        Transaction.is_valid_transaction(transaction=transaction)
