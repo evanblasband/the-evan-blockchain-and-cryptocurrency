@@ -3,8 +3,12 @@ import uuid
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric.utils import (
+    decode_dss_signature,
+    encode_dss_signature,
+)
 
 from backend.config import STARTING_BALANCE
 
@@ -25,32 +29,61 @@ class Wallet:
         self.private_key = ec.generate_private_key(
             curve=ec.SECP256K1(), backend=default_backend()
         )
-        self.public_key = self.private_key.public_key()
+        self.public_key = (
+            self.private_key.public_key()
+            .public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo,
+            )
+            .decode("utf-8")
+        )
         self.balance = STARTING_BALANCE
+        # self.serialize_public_key()
 
-    def sign(self, data) -> bytes:
+    def sign(self, data) -> tuple[int, int]:
         """
         Generate a signature based on the data and the local private key
         :param data: the data to sign
-        :return: returns a signed
+        :return: a tuple containing the r and s coordinate values for the
+        signature, to be used to encode later
         """
-        return self.private_key.sign(
-            data=json.dumps(data).encode("UTF-8"),
-            signature_algorithm=ec.ECDSA(hashes.SHA256()),
+        return decode_dss_signature(
+            self.private_key.sign(
+                data=json.dumps(data).encode("UTF-8"),
+                signature_algorithm=ec.ECDSA(hashes.SHA256()),
+            )
         )
 
+    # def serialize_public_key(self) -> None:
+    #     """
+    #     Serialize public key to a string, used inline definition keeping
+    #     here for reference
+    #     :return:
+    #     """
+    #     self.public_key = self.public_key.public_bytes(
+    #         encoding=serialization.Encoding.PEM,
+    #         format=serialization.PublicFormat.SubjectPublicKeyInfo,
+    #     ).decode("utf-8")
+
     @staticmethod
-    def verify(pub_key: ec.EllipticCurvePublicKey, data, signature: bytes) -> bool:
+    def verify(pub_key: str, data, signature: tuple[int, int]) -> bool:
         """
         verify a signature based on the public key and the data.
         :param pub_key: the public key to check signature against
         :param data: the data to verify
-        :param signature: the signature to check against
+        :param signature: the tuple of r and s values corresponding to
+        coordinates on elliptic curve
         :return: true if the signature is valid
         """
+        deserialized_pub_key = serialization.load_pem_public_key(
+            data=pub_key.encode("utf-8"), backend=default_backend()
+        )
+
+        (r, s) = signature
+
         try:
-            pub_key.verify(
-                signature=signature,
+            deserialized_pub_key.verify(
+                signature=encode_dss_signature(r=r, s=s),
                 data=json.dumps(data).encode("UTF-8"),
                 signature_algorithm=ec.ECDSA(hashes.SHA256()),
             )
