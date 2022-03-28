@@ -44,6 +44,13 @@ class Transaction:
 
         self.input = self.create_input(sender_wallet=sender_wallet, output=self.output)
 
+    def to_json(self):
+        """
+        serializing to only have basic data types
+        :return: dictionary of the transaction data
+        """
+        return self.__dict__
+
     @staticmethod
     def create_output(sender_wallet: Wallet, recipient: str, amount: int) -> dict:
         """
