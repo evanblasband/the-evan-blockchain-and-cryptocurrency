@@ -10,13 +10,21 @@ class Transaction:
     recipients.
     """
 
-    def __init__(self, sender_wallet: Wallet, recipient: str, amount: int):
+    def __init__(
+        self,
+        sender_wallet: Wallet = None,
+        recipient: str = None,
+        amount: int = None,
+        id: int = None,
+        output: dict = None,
+        input: dict = None,
+    ):
         """Constructor for Transaction"""
-        self.id = str(uuid.uuid4())[0:8]
-        self.output = Transaction.create_output(
+        self.id = id or str(uuid.uuid4())[0:8]
+        self.output = output or Transaction.create_output(
             sender_wallet=sender_wallet, recipient=recipient, amount=amount
         )
-        self.input = Transaction.create_input(
+        self.input = input or Transaction.create_input(
             sender_wallet=sender_wallet, output=self.output
         )
 
@@ -50,6 +58,14 @@ class Transaction:
         :return: dictionary of the transaction data
         """
         return self.__dict__
+
+    @staticmethod
+    def from_json(transaction_json: dict) -> "Transaction":
+        """
+        Deserializing transaction in json to transaction object
+        :return: a transaction object
+        """
+        return Transaction(**transaction_json)
 
     @staticmethod
     def create_output(sender_wallet: Wallet, recipient: str, amount: int) -> dict:
@@ -110,6 +126,11 @@ class Transaction:
 def main():
     transaction = Transaction(sender_wallet=Wallet(), recipient="recipient", amount=10)
     print(f"transaction.__dict__: {transaction.__dict__}")
+    transaction_json = transaction.to_json()
+    print(
+        f"transaction.from_json: "
+        f"{Transaction.from_json(transaction_json=transaction_json).__dict__}"
+    )
 
 
 if __name__ == "__main__":
