@@ -8,11 +8,13 @@ from flask import Flask, jsonify, request
 from backend.blockchain.blockchain import Blockchain
 from backend.pubsub import PubSub
 from backend.wallet.transaction import Transaction
+from backend.wallet.transaction_pool import TransactionPool
 from backend.wallet.wallet import Wallet
 
 app = Flask(__name__)
 blockchain = Blockchain()
-pubsub = PubSub(blockchain)
+transaction_pool = TransactionPool()
+pubsub = PubSub(blockchain=blockchain, transaction_pool=transaction_pool)
 wallet = Wallet()
 
 
@@ -61,6 +63,8 @@ def route_wallet_transact():
         recipient=transaction_data["recipient"],
         amount=transaction_data["amount"],
     )
+
+    pubsub.broadcast_transaction(transaction=transaction)
 
     print(f"transaction.to_json: {transaction.to_json()}")
     return jsonify(transaction.to_json())
