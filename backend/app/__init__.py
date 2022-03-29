@@ -58,11 +58,19 @@ def route_wallet_transact():
     :return:
     """
     transaction_data = request.get_json()
-    transaction = Transaction(
-        sender_wallet=wallet,
-        recipient=transaction_data["recipient"],
-        amount=transaction_data["amount"],
-    )
+    transaction = transaction_pool.existing_transaction(wallet.address)
+    if transaction:
+        transaction.update_transaction(
+            sender_wallet=wallet,
+            recipient=transaction_data["recipient"],
+            amount=transaction_data["amount"],
+        )
+    else:
+        transaction = Transaction(
+            sender_wallet=wallet,
+            recipient=transaction_data["recipient"],
+            amount=transaction_data["amount"],
+        )
 
     pubsub.broadcast_transaction(transaction=transaction)
 
