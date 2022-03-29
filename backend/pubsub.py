@@ -7,6 +7,8 @@ from pubnub.pubnub import PubNub
 
 from backend.blockchain.block import Block
 from backend.blockchain.blockchain import Blockchain
+from backend.wallet.transaction import Transaction
+from backend.wallet.transaction_pool import TransactionPool
 
 pn_config = PNConfiguration()
 pn_config.publish_key = "pub-c-97eb77a6-9354-49f5-a545-803eb1878734"
@@ -14,7 +16,7 @@ pn_config.subscribe_key = "sub-c-f87a79a8-a3dd-11ec-81c7-420d26494bdd"
 pn_config.uuid = "python-blockchain-uuid"
 pubnub = PubNub(config=pn_config)
 
-CHANNELS = {"TEST": "TEST", "BLOCK": "BLOCK"}
+CHANNELS = {"TEST": "TEST", "BLOCK": "BLOCK", "TRANSACTION": "TRANSACTION"}
 
 
 # ABC superclass was added to satisfy the interpreter
@@ -23,12 +25,13 @@ CHANNELS = {"TEST": "TEST", "BLOCK": "BLOCK"}
 class Listener(SubscribeCallback, ABC):
     """"""
 
-    def __init__(self, blockchain: Blockchain):
+    def __init__(self, blockchain: Blockchain, transaction_pool: TransactionPool):
         """
 
         :param blockchain:
         """
         self.blockchain = blockchain
+        self.transaction_pool = transaction_pool
 
     def message(self, pubnub, message) -> None:
         """
@@ -50,6 +53,11 @@ class Listener(SubscribeCallback, ABC):
             except Exception as e:
                 print(f"\n -- Chain was not replaced: {e}")
 
+        elif message.channel == CHANNELS["TRANSACTION"]:
+            transaction = Transaction.from_json(transaction_json=message.message)
+            self.transaction_pool.set_transaction(transaction=transaction)
+            print("\n -- Set the  new transaction in the transaction pool")
+
 
 class PubSub:
     """
@@ -57,11 +65,13 @@ class PubSub:
     Provides communication between nodes in the blockchain
     """
 
-    def __init__(self, blockchain: Blockchain):
+    def __init__(self, blockchain: Blockchain, transaction_pool: TransactionPool):
         """Constructor for PubSub"""
         self.pubnub = PubNub(pn_config)
         self.pubnub.subscribe().channels(CHANNELS.values()).execute()
-        self.pubnub.add_listener(Listener(blockchain=blockchain))
+        self.pubnub.add_listener(
+            Listener(blockchain=blockchain, transaction_pool=transaction_pool)
+        )
 
     def publish(self, channel: str, message) -> None:
         """
@@ -79,6 +89,14 @@ class PubSub:
         :return:
         """
         self.publish(channel=CHANNELS["BLOCK"], message=block.to_json())
+
+    def broadcast_transaction(self, transaction: Transaction) -> None:
+        """
+        Broadcast Transaction to all nodes
+        :param transaction: transaction to be broadcast
+        :return:
+        """
+        self.publish(channel=CHANNELS["TRANSACTION"], message=transaction.to_json())
 
 
 def main():
