@@ -49,6 +49,9 @@ class Listener(SubscribeCallback, ABC):
 
             try:
                 self.blockchain.replace_chain(chain=temp_chain)
+                self.transaction_pool.clear_blockchain_transaction(
+                    blockchain=self.blockchain
+                )
                 print("\n -- Chain successfully replaced")
             except Exception as e:
                 print(f"\n -- Chain was not replaced: {e}")

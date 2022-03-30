@@ -39,12 +39,14 @@ def route_get_blockchain() -> flask.Response:
 @app.route("/blockchain/mine")
 def route_blockchain_mine() -> flask.Response:
     """
-    Adds a new block to the blockchain with the specified data
+    Adds a new block to the blockchain with the specified data then removes
+    it from the transaction pool
     :return: the data of the most recently added block in json format
     """
     blockchain.add_block(data=transaction_pool.transaction_data())
     block = blockchain.chain[-1]
     pubsub.broadcast_block(block=block)
+    transaction_pool.clear_blockchain_transaction(blockchain=blockchain)
 
     return jsonify(block.to_json())
 
