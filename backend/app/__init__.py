@@ -42,12 +42,11 @@ def route_blockchain_mine() -> flask.Response:
     Adds a new block to the blockchain with the specified data
     :return: the data of the most recently added block in json format
     """
-    transaction_data = "stubbed_transaction_data"
-    blockchain.add_block(data=transaction_data)
+    blockchain.add_block(data=transaction_pool.transaction_data())
     block = blockchain.chain[-1]
     pubsub.broadcast_block(block=block)
 
-    return block.to_json()
+    return jsonify(block.to_json())
 
 
 @app.route("/wallet/transact", methods=["POST"])
@@ -59,13 +58,13 @@ def route_wallet_transact():
     """
     transaction_data = request.get_json()
     transaction = transaction_pool.existing_transaction(wallet.address)
-    if transaction:
+    if transaction:  # If transaction already exists just update it
         transaction.update_transaction(
             sender_wallet=wallet,
             recipient=transaction_data["recipient"],
             amount=transaction_data["amount"],
         )
-    else:
+    else:  # If a transaction from this address doesn't exist
         transaction = Transaction(
             sender_wallet=wallet,
             recipient=transaction_data["recipient"],
