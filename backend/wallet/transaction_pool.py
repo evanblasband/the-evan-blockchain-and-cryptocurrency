@@ -1,3 +1,5 @@
+from flask import jsonify
+
 from backend.wallet.transaction import Transaction
 
 
@@ -31,3 +33,15 @@ class TransactionPool:
         for transaction in self.transaction_map.values():
             if transaction.input["address"] == address:
                 return transaction
+
+    def transaction_data(self) -> []:
+        """
+        Get the transactions in the transaction pool in their json form
+        :return: a List of maps containing the json representation of each
+        transaction in the transaction pool
+        """
+        return list(
+            map(
+                lambda transaction: transaction.to_json(), self.transaction_map.values()
+            )
+        )
