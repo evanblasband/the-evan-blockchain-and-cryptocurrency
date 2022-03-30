@@ -1,5 +1,6 @@
 from flask import jsonify
 
+from backend.blockchain.blockchain import Blockchain
 from backend.wallet.transaction import Transaction
 
 
@@ -45,3 +46,17 @@ class TransactionPool:
                 lambda transaction: transaction.to_json(), self.transaction_map.values()
             )
         )
+
+    def clear_blockchain_transaction(self, blockchain: Blockchain):
+        """
+        Clears transactions from the transaction pool if they have been
+        recorded in the blockchain
+        :param blockchain: the blockchain to check if transactions have been recorded
+        :return:
+        """
+        for block in blockchain.chain:
+            for transaction in block.data:
+                try:
+                    del self.transaction_map[transaction["id"]]
+                except KeyError:
+                    pass
