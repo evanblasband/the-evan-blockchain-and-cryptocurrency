@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives.asymmetric.utils import (
     encode_dss_signature,
 )
 
+from backend.blockchain.blockchain import Blockchain
 from backend.config import STARTING_BALANCE
 
 
@@ -64,6 +65,32 @@ class Wallet:
     #         encoding=serialization.Encoding.PEM,
     #         format=serialization.PublicFormat.SubjectPublicKeyInfo,
     #     ).decode("utf-8")
+
+    @staticmethod
+    def calculate_balance(blockchain: Blockchain, address: str) -> int:
+        """
+        Calculate the wallet balance for a given address considering the
+        transaction data within the blockchain.
+
+        Balance is found by adding all of the output values that belong to a
+        given address since the most recent transaction by that address
+
+        :param blockchain: the blockchain to search through :param address:
+        the wallet address to calculate the balance for :return: the balance
+        for that wallet
+        """
+        balance = STARTING_BALANCE
+
+        for block in blockchain.chain:
+            for transaction in block.data:
+                if transaction["input"]["address"] == address:
+                    # Any time address conducts new transaction it resets
+                    # it's balance
+                    balance = transaction["output"][address]
+                elif address in transaction["output"]:
+                    balance += transaction["output"][address]
+
+        return balance
 
     @staticmethod
     def verify(pub_key: str, data, signature: tuple[int, int]) -> bool:
