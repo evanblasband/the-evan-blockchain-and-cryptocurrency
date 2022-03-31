@@ -14,7 +14,6 @@ repos:
         include: ^(app/|tests/)
         exclude: '.*/migrations/.*'
         args: [
-            '--profile', 'black',
             '--filter-files',
             '--line-length=110',
             '--multi-line=3',
@@ -22,6 +21,7 @@ repos:
             '--trailing-comma',
             '--use-parentheses',
             '--ensure-newline-before-comments',
+            '--profile', 'black'
         ]
   - repo: https://github.com/psf/black
     rev: 22.3.0
