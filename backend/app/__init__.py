@@ -15,7 +15,7 @@ app = Flask(__name__)
 blockchain = Blockchain()
 transaction_pool = TransactionPool()
 pubsub = PubSub(blockchain=blockchain, transaction_pool=transaction_pool)
-wallet = Wallet()
+wallet = Wallet(blockchain=blockchain)
 
 
 @app.route("/")
@@ -77,6 +77,15 @@ def route_wallet_transact():
 
     print(f"transaction.to_json: {transaction.to_json()}")
     return jsonify(transaction.to_json())
+
+
+@app.route("/wallet/info")
+def route_wallet_info():
+    """
+    Access the wallet info associated with this application
+    :return: a json string with the wallet address and the balance
+    """
+    return jsonify({"address": wallet.address, "balance": wallet.balance})
 
 
 # Need to enable other nodes to run on different ports
