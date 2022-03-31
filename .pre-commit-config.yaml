@@ -14,6 +14,8 @@ repos:
         include: ^(app/|tests/)
         exclude: '.*/migrations/.*'
         args: [
+            '--profile', 'black',
+            '--filter-files',
             '--line-length=110',
             '--multi-line=3',
             '--force-grid-wrap=0',
