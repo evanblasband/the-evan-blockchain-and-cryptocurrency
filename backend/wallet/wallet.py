@@ -1,8 +1,6 @@
 import json
 import uuid
 
-from backend.blockchain.blockchain import Blockchain
-from backend.config import STARTING_BALANCE
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -11,6 +9,9 @@ from cryptography.hazmat.primitives.asymmetric.utils import (
     decode_dss_signature,
     encode_dss_signature,
 )
+
+from backend.blockchain.blockchain import Blockchain
+from backend.config import STARTING_BALANCE
 
 
 class Wallet:
