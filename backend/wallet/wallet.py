@@ -1,6 +1,8 @@
 import json
 import uuid
 
+from backend.blockchain.blockchain import Blockchain
+from backend.config import STARTING_BALANCE
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -9,9 +11,6 @@ from cryptography.hazmat.primitives.asymmetric.utils import (
     decode_dss_signature,
     encode_dss_signature,
 )
-
-from backend.blockchain.blockchain import Blockchain
-from backend.config import STARTING_BALANCE
 
 
 class Wallet:
@@ -23,8 +22,10 @@ class Wallet:
 
     def __init__(
         self,
+        blockchain: Blockchain = None,
     ):
         """Constructor for Wallet"""
+        self.blockchain = blockchain
         self.address = str(uuid.uuid4())[0:8]  # shorter uuid for now for
         # debugging
         self.private_key = ec.generate_private_key(
@@ -38,8 +39,18 @@ class Wallet:
             )
             .decode("utf-8")
         )
-        self.balance = STARTING_BALANCE
         # self.serialize_public_key()
+
+    @property
+    def balance(self) -> int:
+        """
+        Any time the wallet balance is accessed we will calculate the
+        balance so that it is always accurate with the blockchain
+        :return: the wallet balance based on the blockchain
+        """
+        return Wallet.calculate_balance(
+            blockchain=self.blockchain, address=self.address
+        )
 
     def sign(self, data) -> tuple[int, int]:
         """
@@ -75,11 +86,13 @@ class Wallet:
         Balance is found by adding all of the output values that belong to a
         given address since the most recent transaction by that address
 
-        :param blockchain: the blockchain to search through :param address:
-        the wallet address to calculate the balance for :return: the balance
-        for that wallet
+        :param blockchain: the blockchain to search through
+        :param address: the wallet address to calculate the balance for
+        :return: the balance for that wallet
         """
         balance = STARTING_BALANCE
+        if not blockchain:
+            return balance
 
         for block in blockchain.chain:
             for transaction in block.data:
