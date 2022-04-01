@@ -1,6 +1,6 @@
 import pytest
 
-from backend.config import STARTING_BALANCE
+from backend.config import MINING_REWARD, MINING_REWARD_INPUT, STARTING_BALANCE
 from backend.wallet.transaction import Transaction
 from backend.wallet.wallet import Wallet
 
@@ -162,3 +162,51 @@ def test_valid_transaction_invalid_signature():
     transaction.input["signature"] = Wallet().sign(data=transaction.output)
     with pytest.raises(Exception, match="Invalid signature"):
         Transaction.is_valid_transaction(transaction=transaction)
+
+
+def test_reward_transaction():
+    """
+    Making sure rewarding a miner gives correct data
+    :return:
+    """
+    miner_wallet = Wallet()
+    transaction = Transaction.reward_transaction(miner_wallet=miner_wallet)
+
+    assert transaction.input == MINING_REWARD_INPUT
+    assert transaction.output[miner_wallet.address] == MINING_REWARD
+
+
+def test_valid_reward_transaction():
+    """
+    making sure that validating a legitimate reward transaction works,
+    should not throw exception
+    :return:
+    """
+    reward_transaction = Transaction.reward_transaction(miner_wallet=Wallet())
+    Transaction.is_valid_transaction(transaction=reward_transaction)
+
+
+def test_invalid_reward_transaction_multiple_values():
+    """
+    checking an exception is thrown if there are more than one recipient in
+    an award transaction
+    :return:
+    """
+    reward_transaction = Transaction.reward_transaction(miner_wallet=Wallet())
+    reward_transaction.output["extra_recipient"] = 60
+
+    with pytest.raises(Exception, match="Invalid reward transaction"):
+        Transaction.is_valid_transaction(transaction=reward_transaction)
+
+
+def test_invalid_reward_transaction_wrong_amount():
+    """
+    checking an exception is thrown if the mining reward amount is not correct
+    :return:
+    """
+    wallet = Wallet()
+    reward_transaction = Transaction.reward_transaction(miner_wallet=wallet)
+    reward_transaction.output[wallet.address] = 60
+
+    with pytest.raises(Exception, match="Invalid reward transaction"):
+        Transaction.is_valid_transaction(transaction=reward_transaction)
