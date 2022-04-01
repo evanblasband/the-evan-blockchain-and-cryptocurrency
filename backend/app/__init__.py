@@ -43,7 +43,11 @@ def route_blockchain_mine() -> flask.Response:
     it from the transaction pool
     :return: the data of the most recently added block in json format
     """
-    blockchain.add_block(data=transaction_pool.transaction_data())
+    transaction_data = transaction_pool.transaction_data()
+    transaction_data.append(
+        Transaction.reward_transaction(miner_wallet=wallet).to_json()
+    )
+    blockchain.add_block(data=transaction_data)
     block = blockchain.chain[-1]
     pubsub.broadcast_block(block=block)
     transaction_pool.clear_blockchain_transaction(blockchain=blockchain)
