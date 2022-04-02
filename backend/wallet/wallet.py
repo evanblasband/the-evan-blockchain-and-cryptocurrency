@@ -1,5 +1,6 @@
 import json
 import uuid
+from typing import TYPE_CHECKING
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
@@ -10,7 +11,9 @@ from cryptography.hazmat.primitives.asymmetric.utils import (
     encode_dss_signature,
 )
 
-from backend.blockchain.blockchain import Blockchain
+if TYPE_CHECKING:
+    from backend.blockchain.blockchain import Blockchain
+
 from backend.config import STARTING_BALANCE
 
 
@@ -23,7 +26,7 @@ class Wallet:
 
     def __init__(
         self,
-        blockchain: Blockchain = None,
+        blockchain: "Blockchain" = None,
     ):
         """Constructor for Wallet"""
         self.blockchain = blockchain
@@ -79,7 +82,7 @@ class Wallet:
     #     ).decode("utf-8")
 
     @staticmethod
-    def calculate_balance(blockchain: Blockchain, address: str) -> int:
+    def calculate_balance(blockchain: "Blockchain", address: str) -> int:
         """
         Calculate the wallet balance for a given address considering the
         transaction data within the blockchain.
