@@ -2,6 +2,8 @@ import pytest
 
 from backend.blockchain.block import GENESIS_DATA
 from backend.blockchain.blockchain import Blockchain
+from backend.wallet.transaction import Transaction
+from backend.wallet.wallet import Wallet
 
 
 def test_blockchain_first_element():
@@ -36,7 +38,13 @@ def block_chain_3_blocks():
     """
     blockchain = Blockchain()
     for i in range(3):
-        blockchain.add_block(i)
+        blockchain.add_block(
+            [
+                Transaction(
+                    sender_wallet=Wallet(), recipient="recipient", amount=i
+                ).to_json()
+            ]
+        )
     return blockchain
 
 
@@ -98,3 +106,10 @@ def test_replace_chain_bad_chain(block_chain_3_blocks: Blockchain):
 
     with pytest.raises(Exception):
         blockchain.replace_chain(chain=block_chain_3_blocks.chain)
+
+
+def test_is_valid_transaction_chain_valid_chain():
+    """
+    Testing no exception is raised for valid transaction chain
+    :return:
+    """
