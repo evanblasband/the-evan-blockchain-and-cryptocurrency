@@ -162,3 +162,22 @@ def test_is_valid_transaction_chain_bad_transaction(block_chain_3_blocks):
 
     with pytest.raises(Exception):
         Blockchain.is_valid_transaction_chain(chain=block_chain_3_blocks.chain)
+
+
+def test_is_valid_transaction_chain_bad_historic_balance(block_chain_3_blocks):
+    """
+    Exception should be thrown if balance of transaction does not compute
+    based on previous blockchain transactions
+    :return:
+    """
+    wallet = Wallet()
+    bad_transaction = Transaction(
+        sender_wallet=wallet, recipient="recipient", amount=12
+    )
+    bad_transaction.input[wallet.address] = 9000
+    bad_transaction.input["amount"] = 9012
+    bad_transaction.output["signature"] = wallet.sign(data=bad_transaction.output)
+    block_chain_3_blocks.add_block(data=[bad_transaction.to_json()])
+
+    with pytest.raises(Exception, match="has invalid input amount"):
+        Blockchain.is_valid_transaction_chain(chain=block_chain_3_blocks.chain)
