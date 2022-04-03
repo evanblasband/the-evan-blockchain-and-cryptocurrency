@@ -108,8 +108,57 @@ def test_replace_chain_bad_chain(block_chain_3_blocks: Blockchain):
         blockchain.replace_chain(chain=block_chain_3_blocks.chain)
 
 
-def test_is_valid_transaction_chain_valid_chain():
+def test_is_valid_transaction_chain_valid_chain(block_chain_3_blocks):
     """
     Testing no exception is raised for valid transaction chain
     :return:
     """
+    Blockchain.is_valid_transaction_chain(chain=block_chain_3_blocks.chain)
+
+
+def test_is_valid_transaction_chain_duplicate_transaction(block_chain_3_blocks):
+    """
+    Exception should be thrown because a transaction shows up more than once
+    in a block
+    :return:
+    """
+    transaction = Transaction(
+        sender_wallet=Wallet(), recipient="recipient", amount=12
+    ).to_json()
+    block_chain_3_blocks.add_block(data=[transaction, transaction])
+
+    with pytest.raises(Exception, match="is not unique"):
+        Blockchain.is_valid_transaction_chain(chain=block_chain_3_blocks.chain)
+
+
+def test_is_valid_transaction_chain_multiple_mining_rewards(block_chain_3_blocks):
+    """
+    Exception should be thrown if a block has multiple rewards
+    :return:
+    """
+    reward_1 = Transaction.reward_transaction(miner_wallet=Wallet()).to_json()
+    reward_2 = Transaction.reward_transaction(miner_wallet=Wallet()).to_json()
+
+    block_chain_3_blocks.add_block(data=[reward_1, reward_2])
+
+    with pytest.raises(
+        Exception,
+        match="Can only be one mining reward per block.  " "Check block with hash:",
+    ):
+        Blockchain.is_valid_transaction_chain(chain=block_chain_3_blocks.chain)
+
+
+def test_is_valid_transaction_chain_bad_transaction(block_chain_3_blocks):
+    """
+    Exception should be thrown if there is a bad transaction
+    :return:
+    """
+    bad_transaction = Transaction(
+        sender_wallet=Wallet(), recipient="recipient", amount=12
+    )
+    bad_transaction.input["signature"] = Wallet().sign(data=bad_transaction.output)
+
+    block_chain_3_blocks.add_block(data=[bad_transaction.to_json()])
+
+    with pytest.raises(Exception):
+        Blockchain.is_valid_transaction_chain(chain=block_chain_3_blocks.chain)
