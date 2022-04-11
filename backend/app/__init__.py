@@ -4,6 +4,7 @@ import random
 import flask
 import requests
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 from backend.blockchain.blockchain import Blockchain
 from backend.pubsub import PubSub
@@ -12,6 +13,7 @@ from backend.wallet.transaction_pool import TransactionPool
 from backend.wallet.wallet import Wallet
 
 app = Flask(__name__)
+CORS(app=app, resources={r"/*": {"origins": "http://localhost:3000"}})
 blockchain = Blockchain()
 transaction_pool = TransactionPool()
 pubsub = PubSub(blockchain=blockchain, transaction_pool=transaction_pool)
@@ -105,6 +107,5 @@ if os.environ.get("PEER") == "True":
         print("\n -- Successfully synchronized local chain")
     except Exception as e:
         print(f"\n -- Error synchronizing chain: {e}")
-
 
 app.run(port=PORT)
