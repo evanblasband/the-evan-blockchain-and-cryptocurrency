@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API_BASE_URL } from "../Config";
+import Block from "./Block";
 
 function Blockchain() {
   const [blockchain, setBlockchain] = useState([]);
@@ -15,7 +16,7 @@ function Blockchain() {
       <h3>Blockchain</h3>
       <div>
         {blockchain.map((block) => (
-          <div key={block.hash_}>{JSON.stringify(block)}</div>
+          <Block key={block.hash_} block={block} />
         ))}
       </div>
     </div>
