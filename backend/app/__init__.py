@@ -94,6 +94,30 @@ def route_wallet_info():
     return jsonify({"address": wallet.address, "balance": wallet.balance})
 
 
+@app.route("/blockchain/range")
+def route_blockchain_range():
+    """
+    Route for only querying part of the blockchain
+    :return: will return a json list in reverse order from [start] block to
+    [end] block
+    """
+    start = int(request.args.get("start"))
+    end = int(request.args.get("end"))
+
+    # [::-1] reverses a list, we do this to see the most recent blocks
+    # instead of the oldest blocks
+    return jsonify(blockchain.to_json()[::-1][start:end])
+
+
+@app.route("/blockchain/length")
+def route_blockchain_length():
+    """
+    Gets the length of the blockchain.
+    :return: int of length of blockchain
+    """
+    return jsonify(len(blockchain.chain))
+
+
 # Need to enable other nodes to run on different ports
 ROOT_PORT = 5000
 PORT = ROOT_PORT
