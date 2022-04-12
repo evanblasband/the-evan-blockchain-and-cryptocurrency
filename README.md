@@ -34,6 +34,14 @@ Make sure to activate the virtual env
 python3 -m backend.app
 ```
 
+**Seed the blockchain with data**
+
+Make sure to activate the virtual env
+
+```bash
+export SEED_DATA=True && python3 -m backend.app
+```
+
 **Running a peer instance**
 
 Make sure to activate the virtual env
