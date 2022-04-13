@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FormGroup, FormControl, Button } from "react-bootstrap";
 import { API_BASE_URL } from "../Config";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function ConductTransaction() {
-  let navigate = useNavigate();
   const [amount, setAmount] = useState(0);
   const [recipient, setRecipient] = useState("");
   const [knownAddresses, setKnownAddresses] = useState([]);
@@ -41,7 +40,6 @@ function ConductTransaction() {
         .then((json) => {
           console.log("submitTransaction json: ", json);
           alert("Success!");
-          navigate("/transaction-pool");
         });
     } else {
       alert("Error: Amount has to be greater than zero");
