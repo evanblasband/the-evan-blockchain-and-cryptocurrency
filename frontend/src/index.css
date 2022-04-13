@@ -50,3 +50,7 @@ input,
 button {
   color: black;
 }
+
+.textButton {
+  color: #fff;
+}

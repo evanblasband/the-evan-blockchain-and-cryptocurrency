@@ -118,6 +118,21 @@ def route_blockchain_length():
     return jsonify(len(blockchain.chain))
 
 
+@app.route("/known-addresses")
+def route_known_addresses():
+    """
+    Route that gives addresses that have sent or received a transaction
+    :return: a json list with all the addresses that have interacted in a
+    transaction
+    """
+    known_addresses = set()
+    for block in blockchain.chain:
+        for transaction in block.data:
+            known_addresses.update(transaction["output"].keys())
+
+    return jsonify(list(known_addresses))
+
+
 # Need to enable other nodes to run on different ports
 ROOT_PORT = 5000
 PORT = ROOT_PORT
