@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { API_BASE_URL } from "../Config";
 import Block from "./Block";
+import { Link } from "react-router-dom";
 
 const PAGE_RANGE = 3;
 
@@ -30,6 +31,8 @@ function Blockchain() {
 
   return (
     <div className="Blockchain">
+      <Link to="/">Home</Link>
+      <hr />
       <h3>Blockchain</h3>
       <div>
         {blockchain.map((block) => (

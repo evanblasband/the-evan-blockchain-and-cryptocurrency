@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import { API_BASE_URL } from "../Config";
-import Blockchain from "./Blockchain";
+import { Link } from "react-router-dom";
 
 function App() {
   const [walletInfo, setWalletInfo] = useState({});
@@ -23,12 +23,13 @@ function App() {
         and cryptocurrencies work at the low level.
       </h3>
       <br />
+      <Link to="/blockchain">Blockchain</Link>
+      <Link to="/conduct-transaction">Conduct a Transaction</Link>
+      <br />
       <div className="walletInfo">
         <div>Address: {address}</div>
         <div>Balance: {balance}</div>
       </div>
-      <br />
-      <Blockchain />
     </div>
   );
 }

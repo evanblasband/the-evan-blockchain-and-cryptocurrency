@@ -3,10 +3,20 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./components/App";
 import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import Blockchain from "./components/Blockchain";
+import ConductTransaction from "./components/ConductTransaction";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes history={createBrowserHistory}>
+        <Route path="/" exact={true} element={<App />} />
+        <Route path="/blockchain" element={<Blockchain />} />
+        <Route path="/conduct-transaction" element={<ConductTransaction />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );
