@@ -133,6 +133,16 @@ def route_known_addresses():
     return jsonify(list(known_addresses))
 
 
+@app.route("/transactions")
+def route_transactions():
+    """
+    Get all of the transactions in the transaction pool
+    :return: returns a json list of all of the transactions in the
+    transaction pool
+    """
+    return jsonify(transaction_pool.transaction_data())
+
+
 # Need to enable other nodes to run on different ports
 ROOT_PORT = 5000
 PORT = ROOT_PORT
@@ -163,6 +173,13 @@ if os.environ.get("SEED_DATA"):
                 ).to_json(),
             ]
         )
-
+    for i in range(3):
+        transaction_pool.set_transaction(
+            transaction=Transaction(
+                sender_wallet=Wallet(),
+                recipient=Wallet().address,
+                amount=random.randint(2, 50),
+            )
+        )
 
 app.run(port=PORT)
