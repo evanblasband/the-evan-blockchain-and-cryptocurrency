@@ -157,7 +157,7 @@ if os.environ.get("PEER") == "True":
     except Exception as e:
         print(f"\n -- Error synchronizing chain: {e}")
 
-if os.environ.get("SEED_DATA"):
+if os.environ.get("SEED_DATA") == "True":
     for i in range(10):
         blockchain.add_block(
             data=[
