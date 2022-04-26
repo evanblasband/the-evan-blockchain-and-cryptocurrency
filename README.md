@@ -1,6 +1,15 @@
 # the-evan-blockchain-and-cryptocurrency
 
-Implementation of my own blockchain and cryptocurrency.
+The purpose of this project was to learn how blockchain technology and crypto currencies work at a fundamental level. The backend (blockchain) portion as well as the crypto currency elements were written in python whereas the frontend was built using React and Javascript (I know its not pretty but that wasn't the goal of this project).
+
+Viewing blockcahin data:
+![](videos/view-blockchain-data.gif)
+
+Conducting a transaction:
+![](videos/conduct-transactions.gif)
+
+Mine a block of transactions to the blockchian:
+![](videos/mine-block-to-blockchain.gif)
 
 ## Backend
 
@@ -54,6 +63,7 @@ export PEER=True && python3 -m backend.app
 
 **Run the Frontend**
 
+Make sure the backend is running.
 In the `frontend` directory, run:
 
 ```bash
