@@ -19,7 +19,7 @@ function App() {
       <img className="logo" src={logo} alt="application-logo" />
       <h2>Welcome to the Evan Blockchain</h2>
       <h3>
-        This project was created as a way for mydlef to learn how blockchains
+        This project was created as a way for myself to learn how blockchains
         and cryptocurrencies work at the low level.
       </h3>
       <br />
