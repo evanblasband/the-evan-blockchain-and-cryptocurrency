@@ -8,7 +8,7 @@ Viewing blockcahin data:
 Conducting a transaction:
 ![](videos/conduct-transactions.gif)
 
-Mine a block of transactions to the blockchian:
+Mine a block of transactions to the blockchain:
 ![](videos/mine-block-to-blockchain.gif)
 
 ## Backend
